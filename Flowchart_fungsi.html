@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowchart Fungsi Playlist Musik</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        select, button {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        select {
+            flex: 1;
+            min-width: 250px;
+            background: white;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .flowchart-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+        
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            min-width: 600px;
+        }
+        
+        .node {
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: 500;
+            text-align: center;
+            min-width: 200px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .node:hover {
+            transform: scale(1.05);
+        }
+        
+        .start-end {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50px;
+            font-weight: bold;
+        }
+        
+        .process {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+        
+        .decision {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            min-width: 250px;
+            padding: 20px 40px;
+        }
+        
+        .input-output {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: white;
+            clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+        }
+        
+        .arrow {
+            width: 3px;
+            height: 30px;
+            background: #667eea;
+            position: relative;
+        }
+        
+        .arrow::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #667eea;
+        }
+        
+        .branch-container {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .branch-label {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .complexity {
+            background: #fff3cd;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        
+        .function-title {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .controls {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Flowchart Sistem Playlist Musik</h1>
+            <p class="subtitle">Visualisasi Fungsi-Fungsi dalam Program</p>
+        </div>
+        
+        <div class="controls">
+            <select id="functionSelect">
+                <option value="">-- Pilih Fungsi --</option>
+                <optgroup label="🎵 Insert Functions">
+                    <option value="insert_first">insert_first()</option>
+                    <option value="insert_last">insert_last()</option>
+                    <option value="insert_after">insert_after()</option>
+                </optgroup>
+                <optgroup label="🗑️ Delete Functions">
+                    <option value="delete_first">delete_first()</option>
+                    <option value="delete_last">delete_last()</option>
+                    <option value="delete_node">delete_node()</option>
+                </optgroup>
+                <optgroup label="📋 Display Functions">
+                    <option value="display_forward">display_forward()</option>
+                    <option value="display_backward">display_backward()</option>
+                </optgroup>
+                <optgroup label="🔍 Search & Update">
+                    <option value="search">search()</option>
+                    <option value="update">update()</option>
+                </optgroup>
+                <optgroup label="🎲 Additional Features">
+                    <option value="shuffle">shuffle()</option>
+                    <option value="play_next">play_next()</option>
+                    <option value="play_previous">play_previous()</option>
+                    <option value="get_current_song">get_current_song()</option>
+                    <option value="get_total_duration">get_total_duration()</option>
+                    <option value="filter_by_genre">filter_by_genre()</option>
+                    <option value="filter_by_year">filter_by_year()</option>
+                    <option value="sort_by_title">sort_by_title()</option>
+                    <option value="sort_by_artist">sort_by_artist()</option>
+                </optgroup>
+            </select>
+            <button onclick="downloadFlowchart()">📥 Download PNG</button>
+            <button onclick="window.print()">🖨️ Print</button>
+        </div>
+        
+        <div class="flowchart-container" id="flowchartContainer">
+            <p style="text-align: center; color: #999; font-size: 1.2em;">
+                👆 Pilih fungsi dari dropdown di atas untuk melihat flowchart
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        const flowcharts = {
+            insert_first: `
+                <div class="flowchart">
+                    <div class="function-title">insert_first(song)</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node input-output">Input: Song object</div>
+                    <div class="arrow"></div>
+                    <div class="node process">Buat node baru dari song</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">head == None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node process">head = tail = new_node<br>current_song = new_node</div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node process">new_node.next = head<br>head.prev = new_node<br>head = new_node</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node process">size += 1</div>
+                    <div class="arrow"></div>
+                    <div class="node input-output">Output: True</div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(1)</div>
+                </div>
+            `,
+            
+            insert_last: `
+                <div class="flowchart">
+                    <div class="function-title">insert_last(song)</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node input-output">Input: Song object</div>
+                    <div class="arrow"></div>
+                    <div class="node process">Buat node baru dari song</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">tail == None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node process">head = tail = new_node<br>current_song = new_node</div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node process">new_node.prev = tail<br>tail.next = new_node<br>tail = new_node</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node process">size += 1</div>
+                    <div class="arrow"></div>
+                    <div class="node input-output">Output: True</div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(1)</div>
+                </div>
+            `,
+            
+            insert_after: `
+                <div class="flowchart">
+                    <div class="function-title">insert_after(target_id, song)</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node input-output">Input: target_id, Song object</div>
+                    <div class="arrow"></div>
+                    <div class="node process">current = head</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">current != None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node decision">current.song.id == target_id?</div>
+                            <div class="arrow"></div>
+                            <div class="branch-container">
+                                <div class="branch">
+                                    <div class="branch-label">YA</div>
+                                    <div class="node process">Buat new_node<br>Hubungkan dengan current</div>
+                                    <div class="arrow"></div>
+                                    <div class="node process">size += 1</div>
+                                    <div class="arrow"></div>
+                                    <div class="node input-output">Return True</div>
+                                </div>
+                                <div class="branch">
+                                    <div class="branch-label">TIDAK</div>
+                                    <div class="node process">current = current.next</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node input-output">Return False</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(n)</div>
+                </div>
+            `,
+            
+            delete_first: `
+                <div class="flowchart">
+                    <div class="function-title">delete_first()</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">head == None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node input-output">Return None</div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node process">deleted = head.song</div>
+                            <div class="arrow"></div>
+                            <div class="node decision">head == tail?</div>
+                            <div class="arrow"></div>
+                            <div class="branch-container">
+                                <div class="branch">
+                                    <div class="branch-label">YA</div>
+                                    <div class="node process">head = tail = None<br>current_song = None</div>
+                                </div>
+                                <div class="branch">
+                                    <div class="branch-label">TIDAK</div>
+                                    <div class="node process">head = head.next<br>head.prev = None</div>
+                                </div>
+                            </div>
+                            <div class="arrow"></div>
+                            <div class="node process">size -= 1</div>
+                            <div class="arrow"></div>
+                            <div class="node input-output">Return deleted</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(1)</div>
+                </div>
+            `,
+            
+            delete_last: `
+                <div class="flowchart">
+                    <div class="function-title">delete_last()</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">tail == None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node input-output">Return None</div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node process">deleted = tail.song</div>
+                            <div class="arrow"></div>
+                            <div class="node decision">head == tail?</div>
+                            <div class="arrow"></div>
+                            <div class="branch-container">
+                                <div class="branch">
+                                    <div class="branch-label">YA</div>
+                                    <div class="node process">head = tail = None<br>current_song = None</div>
+                                </div>
+                                <div class="branch">
+                                    <div class="branch-label">TIDAK</div>
+                                    <div class="node process">tail = tail.prev<br>tail.next = None</div>
+                                </div>
+                            </div>
+                            <div class="arrow"></div>
+                            <div class="node process">size -= 1</div>
+                            <div class="arrow"></div>
+                            <div class="node input-output">Return deleted</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(1)</div>
+                </div>
+            `,
+            
+            delete_node: `
+                <div class="flowchart">
+                    <div class="function-title">delete_node(id)</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node input-output">Input: id</div>
+                    <div class="arrow"></div>
+                    <div class="node process">current = head</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">current != None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node decision">current.song.id == id?</div>
+                            <div class="arrow"></div>
+                            <div class="branch-container">
+                                <div class="branch">
+                                    <div class="branch-label">YA</div>
+                                    <div class="node decision">Cek posisi node</div>
+                                    <div class="arrow"></div>
+                                    <div class="node process">Hapus node sesuai posisi<br>(head/tail/tengah)</div>
+                                    <div class="arrow"></div>
+                                    <div class="node input-output">Return song</div>
+                                </div>
+                                <div class="branch">
+                                    <div class="branch-label">TIDAK</div>
+                                    <div class="node process">current = current.next</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node input-output">Return None</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(n)</div>
+                </div>
+            `,
+            
+            display_forward: `
+                <div class="flowchart">
+                    <div class="function-title">display_forward()</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node process">songs = []<br>current = head</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">current != None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node process">songs.append(current.song)</div>
+                            <div class="arrow"></div>
+                            <div class="node process">current = current.next</div>
+                            <div class="arrow"></div>
+                            <div style="color: #667eea; font-weight: bold;">↻ Loop kembali</div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node input-output">Return songs</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(n)</div>
+                </div>
+            `,
+            
+            display_backward: `
+                <div class="flowchart">
+                    <div class="function-title">display_backward()</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node process">songs = []<br>current = tail</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">current != None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node process">songs.append(current.song)</div>
+                            <div class="arrow"></div>
+                            <div class="node process">current = current.prev</div>
+                            <div class="arrow"></div>
+                            <div style="color: #667eea; font-weight: bold;">↻ Loop kembali</div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node input-output">Return songs</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(n)</div>
+                </div>
+            `,
+            
+            search: `
+                <div class="flowchart">
+                    <div class="function-title">search(query)</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node input-output">Input: query</div>
+                    <div class="arrow"></div>
+                    <div class="node process">results = []<br>current = head<br>query_lower = query.lower()</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">current != None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node decision">query dalam<br>title/artist/genre?</div>
+                            <div class="arrow"></div>
+                            <div class="branch-container">
+                                <div class="branch">
+                                    <div class="branch-label">YA</div>
+                                    <div class="node process">results.append(song)</div>
+                                </div>
+                                <div class="branch">
+                                    <div class="branch-label">TIDAK</div>
+                                    <div class="node process">Lanjut</div>
+                                </div>
+                            </div>
+                            <div class="arrow"></div>
+                            <div class="node process">current = current.next</div>
+                            <div class="arrow"></div>
+                            <div style="color: #667eea; font-weight: bold;">↻ Loop kembali</div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node input-output">Return results</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(n)</div>
+                </div>
+            `,
+            
+            update: `
+                <div class="flowchart">
+                    <div class="function-title">update(id, **kwargs)</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node input-output">Input: id, **kwargs</div>
+                    <div class="arrow"></div>
+                    <div class="node process">current = head</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">current != None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node decision">current.song.id == id?</div>
+                            <div class="arrow"></div>
+                            <div class="branch-container">
+                                <div class="branch">
+                                    <div class="branch-label">YA</div>
+                                    <div class="node process">Update atribut song<br>dengan kwargs</div>
+                                    <div class="arrow"></div>
+                                    <div class="node input-output">Return True</div>
+                                </div>
+                                <div class="branch">
+                                    <div class="branch-label">TIDAK</div>
+                                    <div class="node process">current = current.next</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node input-output">Return False</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(n)</div>
+                </div>
+            `,
+            
+            shuffle: `
+                <div class="flowchart">
+                    <div class="function-title">shuffle()</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node process">songs = display_forward()</div>
+                    <div class="arrow"></div>
+                    <div class="node process">random.shuffle(songs)</div>
+                    <div class="arrow"></div>
+                    <div class="node process">Reset playlist:<br>head = tail = None<br>size = 0</div>
+                    <div class="arrow"></div>
+                    <div class="node process">Untuk setiap song:<br>insert_last(song)</div>
+                    <div class="arrow"></div>
+                    <div class="node input-output">Return True</div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(n)</div>
+                </div>
+            `,
+            
+            play_next: `
+                <div class="flowchart">
+                    <div class="function-title">play_next()</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">current_song != None<br>AND<br>current_song.next != None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node process">current_song = current_song.next</div>
+                            <div class="arrow"></div>
+                            <div class="node input-output">Return current_song.song</div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node input-output">Return None</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(1)</div>
+                </div>
+            `,
+            
+            play_previous: `
+                <div class="flowchart">
+                    <div class="function-title">play_previous()</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">current_song != None<br>AND<br>current_song.prev != None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node process">current_song = current_song.prev</div>
+                            <div class="arrow"></div>
+                            <div class="node input-output">Return current_song.song</div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node input-output">Return None</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(1)</div>
+                </div>
+            `,
+            
+            get_current_song: `
+                <div class="flowchart">
+                    <div class="function-title">get_current_song()</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">current_song != None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node input-output">Return current_song.song</div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node input-output">Return None</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(1)</div>
+                </div>
+            `,
+            
+            get_total_duration: `
+                <div class="flowchart">
+                    <div class="function-title">get_total_duration()</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node process">total = 0<br>current = head</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">current != None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node process">total += current.song.duration</div>
+                            <div class="arrow"></div>
+                            <div class="node process">current = current.next</div>
+                            <div class="arrow"></div>
+                            <div style="color: #667eea; font-weight: bold;">↻ Loop kembali</div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node input-output">Return total</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(n)</div>
+                </div>
+            `,
+            
+            filter_by_genre: `
+                <div class="flowchart">
+                    <div class="function-title">filter_by_genre(genre)</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node input-output">Input: genre</div>
+                    <div class="arrow"></div>
+                    <div class="node process">results = []<br>current = head</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">current != None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node decision">song.genre == genre?</div>
+                            <div class="arrow"></div>
+                            <div class="branch-container">
+                                <div class="branch">
+                                    <div class="branch-label">YA</div>
+                                    <div class="node process">results.append(song)</div>
+                                </div>
+                                <div class="branch">
+                                    <div class="branch-label">TIDAK</div>
+                                    <div class="node process">Lanjut</div>
+                                </div>
+                            </div>
+                            <div class="arrow"></div>
+                            <div class="node process">current = current.next</div>
+                            <div class="arrow"></div>
+                            <div style="color: #667eea; font-weight: bold;">↻ Loop kembali</div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node input-output">Return results</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(n)</div>
+                </div>
+            `,
+            
+            filter_by_year: `
+                <div class="flowchart">
+                    <div class="function-title">filter_by_year(year)</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node input-output">Input: year</div>
+                    <div class="arrow"></div>
+                    <div class="node process">results = []<br>current = head</div>
+                    <div class="arrow"></div>
+                    <div class="node decision">current != None?</div>
+                    <div class="arrow"></div>
+                    <div class="branch-container">
+                        <div class="branch">
+                            <div class="branch-label">YA</div>
+                            <div class="node decision">song.year == year?</div>
+                            <div class="arrow"></div>
+                            <div class="branch-container">
+                                <div class="branch">
+                                    <div class="branch-label">YA</div>
+                                    <div class="node process">results.append(song)</div>
+                                </div>
+                                <div class="branch">
+                                    <div class="branch-label">TIDAK</div>
+                                    <div class="node process">Lanjut</div>
+                                </div>
+                            </div>
+                            <div class="arrow"></div>
+                            <div class="node process">current = current.next</div>
+                            <div class="arrow"></div>
+                            <div style="color: #667eea; font-weight: bold;">↻ Loop kembali</div>
+                        </div>
+                        <div class="branch">
+                            <div class="branch-label">TIDAK</div>
+                            <div class="node input-output">Return results</div>
+                        </div>
+                    </div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(n)</div>
+                </div>
+            `,
+            
+            sort_by_title: `
+                <div class="flowchart">
+                    <div class="function-title">sort_by_title()</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node process">songs = display_forward()</div>
+                    <div class="arrow"></div>
+                    <div class="node process">songs.sort(key=lambda x: x.title.lower())</div>
+                    <div class="arrow"></div>
+                    <div class="node process">Reset playlist:<br>head = tail = None<br>size = 0</div>
+                    <div class="arrow"></div>
+                    <div class="node process">Untuk setiap song:<br>insert_last(song)</div>
+                    <div class="arrow"></div>
+                    <div class="node input-output">Return True</div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(n log n)</div>
+                </div>
+            `,
+            
+            sort_by_artist: `
+                <div class="flowchart">
+                    <div class="function-title">sort_by_artist()</div>
+                    <div class="node start-end">START</div>
+                    <div class="arrow"></div>
+                    <div class="node process">songs = display_forward()</div>
+                    <div class="arrow"></div>
+                    <div class="node process">songs.sort(key=lambda x: x.artist.lower())</div>
+                    <div class="arrow"></div>
+                    <div class="node process">Reset playlist:<br>head = tail = None<br>size = 0</div>
+                    <div class="arrow"></div>
+                    <div class="node process">Untuk setiap song:<br>insert_last(song)</div>
+                    <div class="arrow"></div>
+                    <div class="node input-output">Return True</div>
+                    <div class="arrow"></div>
+                    <div class="node start-end">END</div>
+                    <div class="complexity">⏱️ Kompleksitas: O(n log n)</div>
+                </div>
+            `
+        };
+
+        document.getElementById('functionSelect').addEventListener('change', function() {
+            const selected = this.value;
+            const container = document.getElementById('flowchartContainer');
+            
+            if (selected && flowcharts[selected]) {
+                container.innerHTML = flowcharts[selected];
+            } else {
+                container.innerHTML = '<p style="text-align: center; color: #999; font-size: 1.2em;">👆 Pilih fungsi dari dropdown di atas untuk melihat flowchart</p>';
+            }
+        });
+
+        function downloadFlowchart() {
+            const select = document.getElementById('functionSelect');
+            const selected = select.value;
+            
+            if (!selected) {
+                alert('⚠️ Pilih fungsi terlebih dahulu!');
+                return;
+            }
+            
+            const container = document.getElementById('flowchartContainer');
+            const functionName = select.options[select.selectedIndex].text;
+            
+            html2canvas(container, {
+                backgroundColor: '#ffffff',
+                scale: 2,
+                logging: false,
+                width: container.scrollWidth,
+                height: container.scrollHeight
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `flowchart_${selected}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
